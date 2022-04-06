@@ -1,5 +1,5 @@
 import { PostItem } from "@src/types";
-import { members } from "@members";
+import members from "@.contents/members.json";
 import posts from "@.contents/posts.json";
 
 export function getMemberByName(name: string) {

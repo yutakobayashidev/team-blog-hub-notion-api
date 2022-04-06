@@ -1,9 +1,8 @@
 import { NextPage } from "next";
 import Link from "next/link";
-import Head from "next/head";
 
 import { config } from "@site.config";
-import { members } from "@members";
+import members from "@.contents/members.json";
 import { ContentWrapper } from "@src/components/ContentWrapper";
 import { PageSEO } from "@src/components/PageSEO";
 import { getMemberPath } from "@src/utils/helper";

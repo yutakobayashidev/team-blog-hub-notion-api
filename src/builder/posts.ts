@@ -1,7 +1,10 @@
 import fs from "fs-extra";
 import Parser from "rss-parser";
-import { members } from "../../members";
 import { PostItem, Member } from "../types";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 export default {};
 
 type FeedItem = {
@@ -72,11 +75,39 @@ async function getMemberFeedItems(member: Member): Promise<PostItem[]> {
 }
 
 (async function () {
-  for (const member of members) {
+  const { Client } = require("@notionhq/client");
+
+  const notion = new Client({
+    auth: process.env.NOTION_TOKEN,
+  });
+
+  const data = await notion.databases.query({
+    database_id: process.env.NOTION_DATABASE_ID,
+  });
+
+  const members = data.results
+    .map((_: any) => _.properties)
+    .map((_: any) => {
+      return {
+        id: _.id.rich_text[0].plain_text,
+        name: _.name.title[0].plain_text,
+        role: _.role.rich_text[0].plain_text,
+        bio: _.bio.rich_text[0].plain_text,
+        avatarSrc: _.avatarSrc.url,
+        twitterUsername: _.twitterUsername.rich_text[0].plain_text,
+        githubUsername: _.githubUsername.rich_text[0].plain_text,
+        websiteUrl: _.websiteUrl.url,
+        sources: [_.sources.url],
+      };
+    });
+
+  fs.ensureDirSync(".contents");
+  fs.writeJsonSync(".contents/members.json", members);
+
+  for (const member of (members as unknown) as Member[]) {
     const items = await getMemberFeedItems(member);
     if (items) allPostItems = [...allPostItems, ...items];
   }
   allPostItems.sort((a, b) => b.dateMiliSeconds - a.dateMiliSeconds);
-  fs.ensureDirSync(".contents");
   fs.writeJsonSync(".contents/posts.json", allPostItems);
 })();

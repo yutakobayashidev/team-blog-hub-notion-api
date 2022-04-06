@@ -1,5 +1,5 @@
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
-import { members } from "@members";
+import members from "@.contents/members.json";
 import { PostItem, Member } from "@src/types";
 import { PostList } from "@src/components/PostList";
 import { ContentWrapper } from "@src/components/ContentWrapper";
