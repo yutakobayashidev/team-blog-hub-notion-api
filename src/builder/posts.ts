@@ -83,6 +83,16 @@ async function getMemberFeedItems(member: Member): Promise<PostItem[]> {
 
   const data = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID,
+    filter: {
+      or: [
+        {
+          property: "Published",
+          checkbox: {
+            equals: true,
+          },
+        },
+      ],
+    },
   });
 
   const members = data.results
