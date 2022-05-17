@@ -84,11 +84,17 @@ async function getMemberFeedItems(member: Member): Promise<PostItem[]> {
   const data = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID,
     filter: {
-      or: [
+      and: [
         {
-          property: "Published",
-          checkbox: {
-            equals: true,
+          property: "Name",
+          title: {
+            is_not_empty: true,
+          },
+        },
+        {
+          property: "id",
+          rich_text: {
+            is_not_empty: true,
           },
         },
       ],
@@ -100,7 +106,7 @@ async function getMemberFeedItems(member: Member): Promise<PostItem[]> {
     .map((_: any) => {
       return {
         id: _.id.rich_text[0].plain_text,
-        name: _.name.title[0].plain_text,
+        name: _.Name.title[0].plain_text,
         role: _.role.rich_text[0].plain_text,
         bio: _.bio.rich_text[0].plain_text,
         avatarSrc: _.avatarSrc.url,
